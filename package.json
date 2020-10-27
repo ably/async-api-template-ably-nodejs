@@ -1,0 +1,80 @@
+{
+  "name": "@asyncapi/nodejs-ably-template",
+  "version": "0.7.0",
+  "description": "Node.js WebSockets template for AsyncAPI generator.",
+  "keywords": [
+    "asyncapi",
+    "generator",
+    "nodejs",
+    "websockets",
+    "ws",
+    "ably",
+    "template"
+  ],
+  "author": "Thomas Camp <tom.camp@ably.com>",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "echo \"No test specified yet\"",
+    "release": "semantic-release",
+    "get-version": "echo $npm_package_version"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@asyncapi/generator-filters": "^1.0.0",
+    "@asyncapi/generator-hooks": "^0.1.0",
+    "ably": "^1.2.1",
+    "dotenv": "^8.2.0",
+    "filenamify": "^4.1.0"
+  },
+  "devDependencies": {
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/github": "^7.0.4",
+    "@semantic-release/npm": "^7.0.3",
+    "@semantic-release/release-notes-generator": "^9.0.1",
+    "conventional-changelog-conventionalcommits": "^4.2.3",
+    "semantic-release": "^17.0.4"
+  },
+  "release": {
+    "branches": [
+      "master"
+    ],
+    "plugins": [
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "conventionalcommits"
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "conventionalcommits"
+        }
+      ],
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
+  },
+  "generator": {
+    "supportedProtocols": [
+      "ws"
+    ],
+    "parameters": {
+      "server": {
+        "description": "The server you want to use in the code."
+      },
+      "asyncapiFileDir": {
+        "description": "Custom location of the AsyncAPI file that you provided as an input in generation. By default it is located in the root of the output directory"
+      }
+    },
+    "generator": ">=0.50.0 <2.0.0",
+    "filters": [
+      "@asyncapi/generator-filters"
+    ],
+    "hooks": {
+      "@asyncapi/generator-hooks": "createAsyncapiFile"
+    }
+  }
+}

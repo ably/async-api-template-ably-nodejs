@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>{{ asyncapi.info().title() }}</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <script src="https://cdn.ably.io/lib/ably.min-1.js"></script>
+  </head>
+  <body>
+    <h1>{{ asyncapi.info().title() }}</h1>
+
+    <h3>Available channels</h3>
+    {%- for channelName, channel in asyncapi.channels() %}
+    {%- if channel.hasSubscribe() %}
+    <a href="/{{ channelName | variablesToUrl }}">{{ channelName }}</p>
+    {%- endif -%}
+    {% endfor %}
+  </body>
+</html>

@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <link href="/css/channel.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>{{ channelName }}</h1>
+    <h3>Publishing</h3>
+
+    {%- if channel.hasPublish() %}
+    <p>You can send messages using the textbox below:</p>
+    <span id="myTextBox" class="textarea" role="textbox" contenteditable></span>
+
+    <button id="publish">Publish a message</button>
+    {%- else %}
+    <p>According to the AsyncAPI spec you do not have permission to publish to this channel.</p>
+    {%- endif %}
+
+    <h3>Subscribing</h3>
+
+    {%- if channel.hasSubscribe() %}
+    <p>You can see messages received on this channel below. Green messages indicate the message passed validation against the AsyncAPI Spec, and red messages indicate that it failed.</p>
+    <ul id="messages"></ul>
+    {%- else %}
+    <p>According to the AsyncAPI spec you do not have permission to publish to this channel.</p>
+    {%- endif %}
+  </body>
+
+  <!-- Include the latest Ably Library  -->
+  <script src="https://cdn.ably.io/lib/ably.min-1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ajv/6.12.4/ajv.min.js"></script>
+
+  <!-- Instance the Ably library  -->
+  <script type="text/javascript">
+    const realtime = new Ably.Realtime('<%= ablyKey %>');
+
+    let params = <%- params %>;
+    let channelName = '{{channelName}}';
+
+    const ajv = new Ajv({allErrors: true});
+    const payloadSchema = {{ channel.subscribe().message(0).payload().json() | dump | safe }};
+    const validator = ajv.compile(payloadSchema);
+
+
+    Object.keys(params).forEach(key => channelName = channelName.replace('{' + key + '}', params[key]));
+
+    let channel = realtime.channels.get(channelName);
+
+    {%- if channel.hasSubscribe() %}
+    const receivedLog = document.getElementById('messages');
+
+    channel.subscribe(function(msg) {
+      if (!validator(msg)) {
+        receivedLog.insertAdjacentHTML('afterbegin', '<li style="color:red">' + JSON.stringify(msg.data) + '</li>')
+        console.log("Message does not match spec definition.");
+      } else {
+        receivedLog.insertAdjacentHTML('afterbegin', '<li style="color:green">' + JSON.stringify(msg.data) + '</li>')
+      }
+      console.log("Received: " + JSON.stringify(msg.data));
+    });
+    {%- endif %}
+
+    {%- if channel.hasPublish() %}
+    var myTextBox = document.getElementById('myTextBox');
+    /* Publish a message when the button is pressed */
+    document.getElementById("publish").addEventListener("click", function() {
+      channel.publish("aname", myTextBox.textContent);
+    })
+    {%- endif %}
+  </script>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "{{ asyncapi.info().title() | kebabCase }}",
+  "description": "{{ asyncapi.info().description() | oneLine }}",
+  "version": "{{ asyncapi.info().version() }}",
+  "scripts": {
+    "start": "node src/api/index.js"
+  },
+  "dependencies": {
+    "asyncapi-parser": "0.x",
+    "ajv": "6.12.4",
+    "dotenv": "^8.2.0",
+    "ejs": "^1.0.0",
+    "express": "4.17.1",
+    "node-yaml-config": "0.0.4"
+  }
+}
